@@ -15,13 +15,13 @@ export type Action =
   | { type: Actions.SET_INITIAL_DATA; payload: any }
   | { type: Actions.SET_CONVERISON; payload: number }
   | { type: Actions.SET_ERROR; error: any }
-  | { type: Actions.LOGG_HISTORY; payload: Object };
+  | { type: Actions.LOGG_HISTORY; payload: LoggHistory };
 
 export type ExchangeRateState = {
   data: CurrencyIndexer;
   apiError: any;
   converisionResult: number;
-  history: Array<Object>;
+  history: LoggHistory[];
 };
 
 const initialState: ExchangeRateState = {
@@ -100,8 +100,9 @@ const mapper = (array: Indexer[]) => {
 export const setConversionResult = (data: CurrencyConversion) => {
   return async (dispatch: Dispatch<Action>) => {
     const result = (data.amount * data.fromRate) / data.toRate;
+    const history = { ...data, result } as LoggHistory;
     dispatch({ type: Actions.SET_CONVERISON, payload: result });
-    dispatch({ type: Actions.LOGG_HISTORY, payload: data });
+    dispatch({ type: Actions.LOGG_HISTORY, payload: history });
   };
 };
 
@@ -112,6 +113,10 @@ export interface CurrencyConversion {
   toRate: number;
   date: string;
   amount: number;
+}
+
+export interface LoggHistory extends CurrencyConversion {
+  result: number;
 }
 
 type Indexer<T = any> = Object & {

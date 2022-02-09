@@ -3,11 +3,13 @@ import { Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../Store";
 import { getExhangeData, setConversionResult } from "../Store/exchangeRates";
+import { ConversionHistory } from "./ConversionHistory";
 
 //TODO 1. Add validation on values
 //TODO 2. filter out selected currency from dropdown 1 in dropdown 2
 //TODO 3. cleaner rendering and component split
 //TODO 4. add loading state
+// TODO 5. styled components -> moe CSS out
 
 export const CurrencyConverter = () => {
   const data = useSelector((state: RootState) => state.exhangeRates.data);
@@ -25,10 +27,10 @@ export const CurrencyConverter = () => {
     dispatch(getExhangeData());
   }, [dispatch]);
 
-  const renderSelections = (object: any) => {
+  const renderSelections = (object: any, selectLabel: string) => {
     let list = [
       <option key={"select"} value={"select"}>
-        "select"
+        {selectLabel}
       </option>,
     ];
     for (const [key, value] of Object.entries(object)) {
@@ -70,7 +72,7 @@ export const CurrencyConverter = () => {
           aria-label='select-date'
           onChange={(e) => setSelectedDate(e.target.value.toString())}
         >
-          {renderSelections(data)}
+          {renderSelections(data, "Select date")}
         </Form.Select>
         <br></br>
         <br></br>
@@ -84,11 +86,7 @@ export const CurrencyConverter = () => {
             justifyContent: "space-between",
           }}
         >
-          <Form.Group
-            className='mb-3'
-            controlId='Currency1'
-            style={{ display: "inline-flex" }}
-          >
+          <Form.Group className='mb-3' controlId='Currency1' style={{}}>
             <Form.Label>Currency i have</Form.Label>
             <Form.Control
               type='number'
@@ -98,13 +96,13 @@ export const CurrencyConverter = () => {
             />
             {selectedDate && (
               <Form.Select
-                aria-label='select-date'
+                aria-label='select-currency-from'
                 value={selectedCurrencyFrom}
                 onChange={(e) =>
                   setSelecteCurrencyFrom(e.target.value.toString())
                 }
               >
-                {renderSelections(data[selectedDate])}
+                {renderSelections(data[selectedDate], "Select currency")}
               </Form.Select>
             )}
           </Form.Group>
@@ -114,17 +112,28 @@ export const CurrencyConverter = () => {
             <Form.Control type='number' readOnly value={resultz} />
             {selectedDate && (
               <Form.Select
-                aria-label='select-date'
+                aria-label='select-currency-to'
                 value={selectedCurrencyTo}
                 onChange={(e) =>
                   setSelecteCurrencyTo(e.target.value.toString())
                 }
               >
-                {renderSelections(data[selectedDate])}
+                {renderSelections(data[selectedDate], "Select currency")}
               </Form.Select>
             )}
           </Form.Group>
-          <Button onClick={() => onConvert()}>Convert</Button>
+          <Button
+            style={{
+              color: "white",
+              backgroundColor: "rgb(80, 51, 116)",
+              border: "rgb(80, 51, 116)",
+              maxHeight: "54px",
+              marginTop: "24px",
+            }}
+            onClick={() => onConvert()}
+          >
+            Convert
+          </Button>
         </Form>
       </div>
       {logg.map((i) => (
